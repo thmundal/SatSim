@@ -8,6 +8,7 @@ public class PhysicalBody : MonoBehaviour
     public Vector3 velocity;
     public static float G = 6.673f * Mathf.Pow(10, -11);
     public float gravitationalPull = 0;
+    public Vector3 gravityVector;
 
     public PhysicalBody[] otherBodies;
 
@@ -23,15 +24,30 @@ public class PhysicalBody : MonoBehaviour
         // F = ma
         // a = m/F
 
+        gravitationalPull = 0;
+        gravityVector = Vector3.zero;
+
         foreach(PhysicalBody body in otherBodies) {
             if (body == this) continue;
-            
-            ApplyGravityWith(body);
-            body.ApplyGravityWith(this);
+
+            // Reset grav pull. Should reorganize this parameter to something that makes more sense
+
+            gravitationalPull += GravityBetween(body);
+            gravityVector += GravityVectorTowards(body);
+
+            //ApplyGravityWith(body);
             //Debug.DrawLine(transform.position, body.transform.position);
         }
 
-        transform.position += velocity;
+        ApplyGravity(gravityVector, gravitationalPull);
+        Debug.DrawLine(transform.position, transform.position + (velocity * 5), Color.red);
+
+        transform.position += velocity * Time.deltaTime;
+    }
+
+    public Vector3 GravityVectorTowards(PhysicalBody other)
+    {
+        return (other.transform.position - transform.position).normalized;
     }
 
     public float GravityBetween(PhysicalBody other)
@@ -41,14 +57,19 @@ public class PhysicalBody : MonoBehaviour
         {
             d_squared = 1 / float.MaxValue;
         }
-        return G * mass * other.mass / d_squared;
+        float pull = G * mass * other.mass / d_squared;
+        return pull;
     }
 
     public void ApplyGravityWith(PhysicalBody other)
     {
         Vector3 direction = (other.transform.position - transform.position).normalized;
-        gravitationalPull = GravityBetween(other);
         Debug.DrawLine(transform.position, (direction * gravitationalPull) / mass);
         velocity += (direction * gravitationalPull) / mass;
+    }
+
+    public void ApplyGravity(Vector3 direction, float force)
+    {
+        velocity += (direction * force) / mass;
     }
 }
