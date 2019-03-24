@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PhysicalBody : MonoBehaviour
 {
+    public static float multiplier = 1;
+
     public float mass;
     public Vector3 velocity;
     public static float G = 6.673f * Mathf.Pow(10, -11);
@@ -12,9 +14,12 @@ public class PhysicalBody : MonoBehaviour
 
     public PhysicalBody[] otherBodies;
 
+    private WorldSettings worldSettings;
+
     // Start is called before the first frame update
     void Start()
     {
+        worldSettings = GameObject.Find("worldSettings").GetComponent<WorldSettings>();
         otherBodies = FindObjectsOfType<PhysicalBody>();
     }
 
@@ -36,13 +41,12 @@ public class PhysicalBody : MonoBehaviour
             gravityVector += GravityVectorTowards(body);
 
             //ApplyGravityWith(body);
-            //Debug.DrawLine(transform.position, body.transform.position);
         }
 
         ApplyGravity(gravityVector, gravitationalPull);
-        Debug.DrawLine(transform.position, transform.position + (velocity * 5), Color.red);
+        //Debug.DrawLine(transform.position, transform.position + (velocity * 5), Color.red);
 
-        transform.position += velocity * Time.deltaTime;
+        transform.localPosition += velocity * Time.deltaTime;
     }
 
     public Vector3 GravityVectorTowards(PhysicalBody other)
@@ -57,19 +61,22 @@ public class PhysicalBody : MonoBehaviour
         {
             d_squared = 1 / float.MaxValue;
         }
-        float pull = G * mass * other.mass / d_squared;
+        float pull = (G * mass * other.mass / d_squared) * worldSettings.gravityMultiplier;
         return pull;
     }
 
     public void ApplyGravityWith(PhysicalBody other)
     {
         Vector3 direction = (other.transform.position - transform.position).normalized;
-        Debug.DrawLine(transform.position, (direction * gravitationalPull) / mass);
+        //Debug.DrawLine(transform.position, (direction * gravitationalPull) / mass, Color.green);
+        Debug.DrawLine(transform.position, other.transform.position, Color.green);
         velocity += (direction * gravitationalPull) / mass;
     }
 
     public void ApplyGravity(Vector3 direction, float force)
     {
+        Debug.DrawRay(transform.position, direction, Color.yellow);
+        
         velocity += (direction * force) / mass;
     }
 }

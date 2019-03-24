@@ -2,19 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LightSensor : MonoBehaviour
+public class LightSensor2 : MonoBehaviour
 {
-
     public Vector3 sensorDirection;
-    Vector3 incomingLight;
+    public float value;
 
-    public Transform target;
+    private Transform target;
+    private Vector3 incomingLight;
 
-    public float value = 0;
-    public float angle = 0;
-
-    public float actualAngle = 0;
-    public Vector3 forward;
 
     // Start is called before the first frame update
     void Start()
@@ -23,7 +18,7 @@ public class LightSensor : MonoBehaviour
 
         target = GameObject.FindGameObjectWithTag("sun").transform;
 
-        if(target != null)
+        if (target != null)
         {
             incomingLight = target.transform.position - transform.position;
         }
@@ -32,20 +27,15 @@ public class LightSensor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(target != null)
+        if (target != null)
         {
-            sensorDirection = (transform.forward + transform.up).normalized;
+            sensorDirection = transform.forward;
+            incomingLight = target.transform.position - transform.position;
 
-            Vector3 localPos = transform.localPosition;
-            localPos.Scale(transform.up);
-
-            incomingLight = target.transform.position - transform.parent.position;
-            
-            angle = Vector3.Angle(incomingLight, sensorDirection);
-            actualAngle = angle;
-            forward = transform.forward;
+            float angle = Vector3.Angle(incomingLight, sensorDirection);
 
             Debug.DrawRay(transform.position, sensorDirection, Color.red);
+
 
             if (angle > 90)
             {
