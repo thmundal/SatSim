@@ -2,32 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SolarPanelEdge : MonoBehaviour
+public class SatelliteController2 : MonoBehaviour
 {
-    public Transform sun;
+    //public Transform sun;
 
-    public LightSensor2[] lightSensors;
-    public SolarPanel2[] solarPanels;
+    private LightSensor2[] lightSensors;
+    private SolarPanel2[] solarPanels;
+
+    private AsyncSocketClient socket;
 
     private Rigidbody rgbd;
 
     private float desired_angle;
 
-    public bool rotateClockwise = true;
+    //public bool rotateClockwise = true;
 
     private float lastVel = 0;
 
+    public bool disablePID = false;
     public bool disableRotate = false;
     public bool disableSolarPanel = false;
 
-    public float maxAngularSpeed = 5.0f;
+    //public float maxAngularSpeed = 5.0f;
 
     private PIDController pidRotate;
 
-    public bool showParticles = true;
+    //public bool showParticles = true;
 
-    public GameObject[] thrusterClockwise;
-    public GameObject[] thrusterCounterClockwise;
+    //public GameObject[] thrusterClockwise;
+    //public GameObject[] thrusterCounterClockwise;
 
     // Start is called before the first frame update
     void Start()
@@ -38,11 +41,24 @@ public class SolarPanelEdge : MonoBehaviour
 
         rgbd = GetComponent<Rigidbody>();
 
-        pidRotate = new PIDController(0.000001f, 0.025f, 0f);
+        //pidRotate = new PIDController(0.000001f, 0.025f, 0.0000f);
+        pidRotate = new PIDController(5f, 1f, 0.01f);
+        //pidRotate = new PIDController(1f, 0f, 0f);
+        //pidRotate = new PIDController(1f, 0.001f, 0.001f);
         //pidRotate = new PIDController(0.001f, 0f, 0f);
 
-        AnimateThrusters(thrusterClockwise, false);
-        AnimateThrusters(thrusterCounterClockwise, false);
+        //AnimateThrusters(thrusterClockwise, false);
+        //AnimateThrusters(thrusterCounterClockwise, false);
+
+        socket = FindObjectOfType<NetworkHandler>().client;
+
+        socket.On("connect", () =>
+        {
+            //socket.FillSendBuffer<string>("u","\"float\"");
+            socket.FillSendBuffer<string>("actual_angle","\"float\"");
+            socket.FillSendBuffer<string>("desired_angle","\"float\"");
+            socket.SendAvailableData();
+        });
     }
 
     // Update is called once per frame
@@ -84,6 +100,9 @@ public class SolarPanelEdge : MonoBehaviour
         {
             HandleSolarPanels(desiredSolarPanelDir);
         }
+        socket.FillSendBuffer<float>("actual_angle", Vector3.SignedAngle(transform.forward, Vector3.right, Vector3.up));
+        socket.FillSendBuffer<float>("desired_angle", Vector3.SignedAngle(desiredRotateDir, Vector3.right, Vector3.up));
+        socket.SendBuffer();
     }
 
     Vector3 CalculatedSolarDir()
@@ -113,13 +132,28 @@ public class SolarPanelEdge : MonoBehaviour
     {
         float e = Vector3.SignedAngle(transform.forward, desiredRotateDir, transform.up);
 
-        float u = pidRotate.CalculateFixed(e);
-        if (u > 100)
+        if (!disablePID)
         {
+            float u = pidRotate.CalculateFixed(e);
+            Accelerate(u);
         }
-        print($"e: {e}  u: {u}");
+        else
+        {
+            Accelerate(e);
+        }
 
-        Accelerate(u);
+
+        //if (u > 100)
+        //{
+        //}
+
+        //print($"e: {e}  u: {u}");
+
+        //socket.FillSendBuffer<float>("u", u);
+        //socket.FillSendBuffer<float>("desired_angle", Vector3.SignedAngle(desiredRotateDir, Vector3.forward, Vector3.up));
+        //socket.FillSendBuffer<float>("actual_angle", Vector3.SignedAngle(transform.forward, Vector3.forward, Vector3.up));
+        //socket.SendBuffer();
+
 
         //print((rgbd.angularVelocity.magnitude - lastVel) / Time.deltaTime);
         //lastVel = rgbd.angularVelocity.magnitude;
@@ -165,31 +199,31 @@ public class SolarPanelEdge : MonoBehaviour
     {
         if (angle < 0)
         {
-            if (rgbd.angularVelocity.magnitude < maxAngularSpeed)
-            {
+            //if (rgbd.angularVelocity.magnitude < maxAngularSpeed)
+            //{
                 rgbd.AddTorque(transform.up * angle, ForceMode.Acceleration);
-                AnimateThrusters(thrusterClockwise, true);
-                AnimateThrusters(thrusterCounterClockwise, false);
-            }
-            else
-            {
-                AnimateThrusters(thrusterClockwise, false);
-                AnimateThrusters(thrusterCounterClockwise, false);
-            }
+                //AnimateThrusters(thrusterClockwise, true);
+                //AnimateThrusters(thrusterCounterClockwise, false);
+            //}
+            //else
+            //{
+                //AnimateThrusters(thrusterClockwise, false);
+                //AnimateThrusters(thrusterCounterClockwise, false);
+            //}
         }
         else
         {
-            if (rgbd.angularVelocity.magnitude > -maxAngularSpeed)
-            {
+            //if (rgbd.angularVelocity.magnitude > -maxAngularSpeed)
+            //{
                 rgbd.AddTorque(transform.up * angle, ForceMode.Acceleration);
-                AnimateThrusters(thrusterCounterClockwise, true);
-                AnimateThrusters(thrusterClockwise, false);
-            }
-            else
-            {
-                AnimateThrusters(thrusterClockwise, false);
-                AnimateThrusters(thrusterCounterClockwise, false);
-            }
+                //AnimateThrusters(thrusterCounterClockwise, true);
+                //AnimateThrusters(thrusterClockwise, false);
+            //}
+            //else
+            //{
+                //AnimateThrusters(thrusterClockwise, false);
+                //AnimateThrusters(thrusterCounterClockwise, false);
+            //}
         }
     }
 

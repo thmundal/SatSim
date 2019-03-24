@@ -527,13 +527,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 651608055}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc15a8f6c61de654983df63f763eb435, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   mass: 19890000
-  velocity: {x: 0, y: 0, z: 0}
+  velocity: {x: 1000, y: 0, z: 0}
   gravitationalPull: 0
   gravityVector: {x: 0, y: 0, z: 0}
   otherBodies: []
@@ -665,6 +665,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Satellite2
       objectReference: {fileID: 0}
+    - target: {fileID: 6661272843369585236, guid: 12d2590821e7f0d428c72faa28cc0474,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7003839253774708609, guid: 12d2590821e7f0d428c72faa28cc0474,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4540199277643761318, guid: 12d2590821e7f0d428c72faa28cc0474,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5256538266339079991, guid: 12d2590821e7f0d428c72faa28cc0474,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -688,7 +703,7 @@ PrefabInstance:
     - target: {fileID: 5256538266339079991, guid: 12d2590821e7f0d428c72faa28cc0474,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.08715578
       objectReference: {fileID: 0}
     - target: {fileID: 5256538266339079991, guid: 12d2590821e7f0d428c72faa28cc0474,
         type: 3}
@@ -698,7 +713,7 @@ PrefabInstance:
     - target: {fileID: 5256538266339079991, guid: 12d2590821e7f0d428c72faa28cc0474,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9961947
       objectReference: {fileID: 0}
     - target: {fileID: 5256538266339079991, guid: 12d2590821e7f0d428c72faa28cc0474,
         type: 3}
@@ -713,7 +728,7 @@ PrefabInstance:
     - target: {fileID: 5256538266339079991, guid: 12d2590821e7f0d428c72faa28cc0474,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5256538266339079991, guid: 12d2590821e7f0d428c72faa28cc0474,
         type: 3}
@@ -820,6 +835,11 @@ PrefabInstance:
       propertyPath: m_LengthScale
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3871024693163862481, guid: 12d2590821e7f0d428c72faa28cc0474,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 12d2590821e7f0d428c72faa28cc0474, type: 3}
 --- !u!4 &800939633 stripped
@@ -850,9 +870,10 @@ MonoBehaviour:
   lightSensors: []
   solarPanels: []
   rotateClockwise: 1
+  disablePID: 1
   disableRotate: 1
   disableSolarPanel: 0
-  maxAngularSpeed: 5
+  maxAngularSpeed: 1e+9
   showParticles: 0
   thrusterClockwise:
   - {fileID: 37118625}

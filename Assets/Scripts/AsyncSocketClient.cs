@@ -30,9 +30,12 @@ public class AsyncSocketClient
     private Dictionary<string, Action> event_listeners;
     private bool do_disconnect = false;
 
+    private List<string> buffer;
+
     public AsyncSocketClient()
     {
         event_listeners = new Dictionary<string, Action>();
+        buffer = new List<string>();
     }
 
     public void Connect()
@@ -57,6 +60,7 @@ public class AsyncSocketClient
 
     private void TryConnect()
     {
+        Debug.Log("Trying to connect");
         socketConnection = new TcpClient();
 
         while(!connected)
@@ -64,6 +68,7 @@ public class AsyncSocketClient
             try {
                 socketConnection.Connect(host, port);
                 connected = true;
+                Debug.Log("connected");
             }
             catch (SocketException)
             {
@@ -117,11 +122,29 @@ public class AsyncSocketClient
             Debug.Log("Server disconnected");
         }
     }
-    
+
+    public void FillSendBuffer<T>(string key, T value)
+    {
+        buffer.Add("\"" + key + "\":" + value.ToString().Replace(",", "."));
+    }
+
+    public void SendAvailableData()
+    {
+        Send("{\"available_data\": {" + string.Join(",", buffer.ToArray()) + "}}");
+        buffer.Clear();
+    }
+
+    public void SendBuffer()
+    {
+        Send("{" + string.Join(",", buffer.ToArray()) + "}");
+        buffer.Clear();
+    }
+
     public void Send(string data)
     {
-        if(socketConnection == null && !connected)
+        if(socketConnection == null || !connected)
         {
+            Debug.Log("not connected");
             return;
         }
 
@@ -132,7 +155,7 @@ public class AsyncSocketClient
             {
                 byte[] output = Encoding.ASCII.GetBytes(data + "\n");
                 stream.Write(output, 0, output.Length);
-                //Debug.Log("Sent to server: " + data);
+                Debug.Log("Sent to server: " + data);
             }
         } catch(SocketException e)
         {
