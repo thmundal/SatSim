@@ -112,18 +112,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &10823257 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6661272843369585236, guid: 12d2590821e7f0d428c72faa28cc0474,
-    type: 3}
-  m_PrefabInstance: {fileID: 800939632}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &37118625 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7003839253774708609, guid: 12d2590821e7f0d428c72faa28cc0474,
-    type: 3}
-  m_PrefabInstance: {fileID: 800939632}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &148869163
 GameObject:
   m_ObjectHideFlags: 0
@@ -324,12 +312,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7548cf2cd3110914a882d3532f4ea2ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &469738083 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4540199277643761318, guid: 12d2590821e7f0d428c72faa28cc0474,
-    type: 3}
-  m_PrefabInstance: {fileID: 800939632}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &530508943
 GameObject:
   m_ObjectHideFlags: 0
@@ -513,6 +495,7 @@ GameObject:
   - component: {fileID: 651608058}
   - component: {fileID: 651608057}
   - component: {fileID: 651608056}
+  - component: {fileID: 651608061}
   m_Layer: 0
   m_Name: Sun
   m_TagString: sun
@@ -527,7 +510,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 651608055}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc15a8f6c61de654983df63f763eb435, type: 3}
   m_Name: 
@@ -610,6 +593,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &651608061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651608055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10840bdaffa2089458291618ccb855fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 50000
+  deltaTheta: 0.1
 --- !u!1 &750371793
 GameObject:
   m_ObjectHideFlags: 0
@@ -866,21 +863,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb05b205fdd132248b0a7f8a584dfbbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sun: {fileID: 651608060}
-  lightSensors: []
-  solarPanels: []
-  rotateClockwise: 1
   disablePID: 1
   disableRotate: 1
   disableSolarPanel: 0
-  maxAngularSpeed: 1e+9
-  showParticles: 0
-  thrusterClockwise:
-  - {fileID: 37118625}
-  - {fileID: 1941274590}
-  thrusterCounterClockwise:
-  - {fileID: 10823257}
-  - {fileID: 469738083}
 --- !u!54 &875816284
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -978,12 +963,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27fe6d2a15a377f4587f716a2d37ca8a, type: 3}
---- !u!1 &1941274590 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3871024693163862481, guid: 12d2590821e7f0d428c72faa28cc0474,
-    type: 3}
-  m_PrefabInstance: {fileID: 800939632}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2083224559 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6368032528847041540, guid: 12d2590821e7f0d428c72faa28cc0474,

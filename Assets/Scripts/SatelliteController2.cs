@@ -115,7 +115,7 @@ public class SatelliteController2 : MonoBehaviour
         //Vector3 vecToSun = Vector3.ProjectOnPlane(solarPanel.calculated_solar_dir, transform.up).normalized * solarPanel.calculated_solar_dir.magnitude;
         //vecToSun += (edgeSensor[0].value * edgeSensor[0].forward);
         //vecToSun += (edgeSensor[1].value * edgeSensor[1].forward);
-        Debug.DrawRay(transform.position, vecToSun * 3, Color.yellow);
+        Debug.DrawRay(transform.position, vecToSun * 20f, Color.yellow);
         return vecToSun;
     }
 

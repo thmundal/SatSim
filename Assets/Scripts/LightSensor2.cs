@@ -42,7 +42,8 @@ public class LightSensor2 : MonoBehaviour
                 angle = 90;
             }
 
-            value = 1 - angle / 90;
+            value = Mathf.Cos(Mathf.Deg2Rad * angle);
+            //value = 1 - angle / 90;
         }
     }
 }
