@@ -29,6 +29,7 @@ public class AsyncSocketClient
 
     private Dictionary<string, Action> event_listeners;
     private bool do_disconnect = false;
+    private bool running = false;
 
     private List<string> buffer;
 
@@ -47,6 +48,7 @@ public class AsyncSocketClient
     {
         try
         {
+            running = true;
             clientReceiveThread = new Thread(new ThreadStart(ListenForData));
             clientReceiveThread.IsBackground = true;
             clientReceiveThread.Start();
@@ -85,7 +87,7 @@ public class AsyncSocketClient
 
             Byte[] bytes = new byte[1024];
 
-            while(true)
+            while(running)
             {
                 TryConnect();
 
@@ -155,7 +157,7 @@ public class AsyncSocketClient
             {
                 byte[] output = Encoding.ASCII.GetBytes(data + "\n");
                 stream.Write(output, 0, output.Length);
-                Debug.Log("Sent to server: " + data);
+                //Debug.Log("Sent to server: " + data);
             }
         } catch(SocketException e)
         {
@@ -188,8 +190,10 @@ public class AsyncSocketClient
         if(socketConnection != null)
         {
             do_disconnect = true;
-            connected = false;
             socketConnection.Dispose();
+            connected = false;
         }
+
+        running = false;
     }
 }

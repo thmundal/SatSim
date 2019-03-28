@@ -38,7 +38,7 @@ public class SatelliteController : MonoBehaviour
             string[] available_data = new string[solarPanels.Length];
             for(int i=0; i<solarPanels.Length; i++)
             {
-                available_data[i] = "\"adjust_value_"+i+"\":\"float\", \"actual_angle_"+i+"\":\"float\", \"desired_position_"+i+"\":\"float\", \"actual_solar_angle_"+i+"\":\"float\"";
+                available_data[i] = "\"adjust_value_"+i+"\":\"float\", \"actual_angle_"+i+"\":\"float\", \"desired_position_"+i+"\":\"float\", \"actual_solar_angle_"+i+"\":\"float\", \"AngleError_"+i+"\":\"float\"";
             }
             socket.Send("{\"available_data\": {"+ string.Join(",", available_data) +"}}");
         });
@@ -73,11 +73,11 @@ public class SatelliteController : MonoBehaviour
             if(socket.connected && elapsed_delta > 0.05)
             {
                 //float solar_angle     = Vector3.SignedAngle(panel.resting_pos.forward, panel.calculated_solar_dir,                        transform.right);
-                float actualSolarAngle  = Vector3.SignedAngle(panel.resting_pos.forward, sun.transform.position - panel.transform.position, transform.right);
+                float actualSolarAngle  = Vector3.SignedAngle(panel.zero_position.forward, sun.transform.position - panel.transform.position, transform.right);
 
                 elapsed_delta = 0;
                 //string msg = "{ \"adjust_value\": { \"time\":" + elapsed_time.ToString().Replace(",", ".") + ", \"value\": "+ adjustValue.ToString().Replace(",", ".")+"} }";
-                string msg = "{ \"adjust_value_"+i+"\": "+ adjustValue.ToString().Replace(",", ".")+" , \"actual_angle_"+i+"\": "+ panel.current_offset_angle.ToString().Replace(",", ".") + ", \"desired_position_"+i+"\": "+panel.desired_position.ToString().Replace(",", ".")+", \"actual_solar_angle_"+i+"\": "+actualSolarAngle.ToString().Replace(",", ".")+"}";
+                string msg = "{ \"adjust_value_"+i+"\": "+ adjustValue.ToString().Replace(",", ".")+" , \"actual_angle_"+i+"\": "+ panel.current_offset_angle.ToString().Replace(",", ".") + ", \"desired_position_"+i+"\": "+panel.desired_position.ToString().Replace(",", ".")+", \"actual_solar_angle_"+i+"\": "+actualSolarAngle.ToString().Replace(",", ".")+", \"AngleError_"+i+"\":"+panel.angleError.ToString().Replace(",", ".")+"}";
 
                 socket.Send(msg);
             }

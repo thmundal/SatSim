@@ -25,7 +25,7 @@ public class LightSensor : MonoBehaviour
 
         if(target != null)
         {
-            incomingLight = target.transform.position - transform.position;
+            incomingLight = target.transform.position - transform.parent.position;
         }
     }
 
@@ -35,13 +35,11 @@ public class LightSensor : MonoBehaviour
         if(target != null)
         {
             sensorDirection = (transform.forward + transform.up).normalized;
-
-            Vector3 localPos = transform.localPosition;
-            localPos.Scale(transform.up);
-
-            incomingLight = target.transform.position - transform.parent.position;
             
+            incomingLight = target.transform.position - transform.parent.position;
+
             angle = Vector3.Angle(incomingLight, sensorDirection);
+
             actualAngle = angle;
             forward = transform.forward;
 
