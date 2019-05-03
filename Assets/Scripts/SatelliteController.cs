@@ -38,9 +38,21 @@ public class SatelliteController : MonoBehaviour
             string[] available_data = new string[solarPanels.Length];
             for(int i=0; i<solarPanels.Length; i++)
             {
-                available_data[i] = "\"adjust_value_"+i+"\":\"float\", \"actual_angle_"+i+"\":\"float\", \"desired_position_"+i+"\":\"float\", \"actual_solar_angle_"+i+"\":\"float\", \"AngleError_"+i+"\":\"float\"";
+                //available_data[i] = "\"adjust_value_"+i+"\":\"float\", \"actual_angle_"+i+"\":\"float\", \"desired_position_"+i+"\":\"float\", \"actual_solar_angle_"+i+"\":\"float\", \"AngleError_"+i+"\":\"float\"";
+
+                socket.FillSendBuffer<string>("adjust_value_"+i, "\"float\"");
+                socket.FillSendBuffer<string>("actual_angle_"+i, "\"float\"");
+                socket.FillSendBuffer<string>("desired_angle_"+i, "\"float\"");
+                socket.FillSendBuffer<string>("angle_error_"+i, "\"float\"");
+                socket.FillSendBuffer<string>("pid_e_"+i, "\"float\"");
+                socket.FillSendBuffer<string>("pid_d_"+i, "\"float\"");
+                socket.FillSendBuffer<string>("pid_i_"+i, "\"float\"");
+                socket.FillSendBuffer<string>("pid_u_"+i, "\"float\"");
             }
-            socket.Send("{\"available_data\": {"+ string.Join(",", available_data) +"}}");
+
+            socket.SendAvailableData();
+
+            //socket.Send("{\"available_data\": {"+ string.Join(",", available_data) +"}}");
         });
 
         socket.On("message", () =>
@@ -77,9 +89,18 @@ public class SatelliteController : MonoBehaviour
 
                 elapsed_delta = 0;
                 //string msg = "{ \"adjust_value\": { \"time\":" + elapsed_time.ToString().Replace(",", ".") + ", \"value\": "+ adjustValue.ToString().Replace(",", ".")+"} }";
-                string msg = "{ \"adjust_value_"+i+"\": "+ adjustValue.ToString().Replace(",", ".")+" , \"actual_angle_"+i+"\": "+ panel.current_offset_angle.ToString().Replace(",", ".") + ", \"desired_position_"+i+"\": "+panel.desired_position.ToString().Replace(",", ".")+", \"actual_solar_angle_"+i+"\": "+actualSolarAngle.ToString().Replace(",", ".")+", \"AngleError_"+i+"\":"+panel.angleError.ToString().Replace(",", ".")+"}";
+                //string msg = "{ \"adjust_value_"+i+"\": "+ adjustValue.ToString().Replace(",", ".")+" , \"actual_angle_"+i+"\": "+ panel.current_offset_angle.ToString().Replace(",", ".") + ", \"desired_position_"+i+"\": "+panel.desired_position.ToString().Replace(",", ".")+", \"actual_solar_angle_"+i+"\": "+actualSolarAngle.ToString().Replace(",", ".")+", \"AngleError_"+i+"\":"+panel.angleError.ToString().Replace(",", ".")+"}";
 
-                socket.Send(msg);
+
+                socket.FillSendBuffer<float>("adjust_value_" + i, adjustValue);
+                socket.FillSendBuffer<float>("actual_angle_" + i, panel.current_offset_angle);
+                socket.FillSendBuffer<float>("desired_angle_" + i, panel.desired_position);
+                socket.FillSendBuffer<float>("angle_error_" + i, panel.angleError);
+                socket.FillSendBuffer<float>("pid_e_" + i, panel.pid.e);
+                socket.FillSendBuffer<float>("pid_d_" + i, panel.pid.d);
+                socket.FillSendBuffer<float>("pid_i_" + i, panel.pid.i);
+                socket.FillSendBuffer<float>("pid_u_" + i, panel.pid.u);
+                socket.SendBuffer();
             }
             logWriters[i].WriteLine(elapsed_time.ToString().Replace(",", ".") + "," + adjustValue.ToString().Replace(",", "."));
         }

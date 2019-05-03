@@ -33,6 +33,8 @@ public class AsyncSocketClient
 
     private List<string> buffer;
 
+    private Action<string> onMessageReceived_cb;
+
     public AsyncSocketClient()
     {
         event_listeners = new Dictionary<string, Action>();
@@ -104,6 +106,12 @@ public class AsyncSocketClient
                         var incomingData = new byte[length];
                         Array.Copy(bytes, 0, incomingData, 0, length);
                         string serverMessage = Encoding.ASCII.GetString(incomingData);
+
+                        if(onMessageReceived_cb != null)
+                        {
+                            onMessageReceived_cb.Invoke(serverMessage);
+                        }
+
                         Debug.Log("Received from server: " + serverMessage);
                     }
                 }
@@ -125,6 +133,11 @@ public class AsyncSocketClient
         }
     }
 
+    public void OnMessageReceived(Action<string> cb)
+    {
+        onMessageReceived_cb = cb;
+    }
+
     public void FillSendBuffer<T>(string key, T value)
     {
         buffer.Add("\"" + key + "\":" + value.ToString().Replace(",", "."));
@@ -133,6 +146,12 @@ public class AsyncSocketClient
     public void SendAvailableData()
     {
         Send("{\"available_data\": {" + string.Join(",", buffer.ToArray()) + "}}");
+        buffer.Clear();
+    }
+
+    public void SendAvailableInstructions()
+    {
+        Send("{\"available_instructions\": {" + string.Join(",", buffer.ToArray()) + "}}");
         buffer.Clear();
     }
 

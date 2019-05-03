@@ -10,6 +10,11 @@ public class PIDController
     private float Kd;
     private float Ki;
 
+    public float d;
+    public float i;
+    public float e;
+    public float u;
+
     public PIDController(float Kp, float Kd, float Ki)
     {
         ePrev = 0;
@@ -27,7 +32,12 @@ public class PIDController
         }
         float eDet = (e - ePrev) / Time.deltaTime;
         eInt += e * Time.deltaTime;
-        float u = (Kp * e) + (Kd * eDet) + (Ki * eInt);
+        u = (Kp * e) + (Kd * eDet) + (Ki * eInt);
+
+        this.e = e;
+        this.i = eInt;
+        this.d = eDet;
+
         ePrev = e;
         return u;
     }

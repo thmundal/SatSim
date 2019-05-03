@@ -21,7 +21,7 @@ public class SolarPanel : MonoBehaviour
     [Range(0, 0.1f)]
     public float rotationSpeed = 0.02f;
 
-    private PIDController pid;
+    public PIDController pid;
     private SatelliteController satController;
 
     private Transform sun;
