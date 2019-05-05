@@ -11,7 +11,7 @@ public class SadmInstructionReceiver : MonoBehaviour
 
     public Transform sadmShaft;
 
-    private float rotateIterator =  0;
+    public float rotateIterator =  0;
     private float rotationSpeed = 5.0f;
 
     [Range(-180, 180)]
@@ -24,7 +24,7 @@ public class SadmInstructionReceiver : MonoBehaviour
 
     private struct Instruction
     {
-        public string request;
+        public string instruction;
         public float degrees;
     }
 
@@ -38,7 +38,7 @@ public class SadmInstructionReceiver : MonoBehaviour
             Instruction instruction = JsonConvert.DeserializeObject<Instruction>(msg);
 
             Debug.Log(msg);
-            if(instruction.request == "rotate")
+            if(instruction.instruction == "rotate")
             {
                 Debug.Log(instruction.degrees);
                 //targetAngle = instruction.degrees;
@@ -56,15 +56,21 @@ public class SadmInstructionReceiver : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(rotateIterator != 0)
+        if(targetAngle != 0)
         {
-            rotateIterator += -1 * Mathf.Sign(targetAngle);
+            rotateIterator++;
 
-            rotationAngle += rotateIterator * Time.deltaTime * rotationSpeed;
+            rotationAngle += Mathf.Sign(targetAngle);
 
-            if(rotateIterator == 0)
+            if(Mathf.Abs(rotateIterator) == Mathf.Abs(targetAngle) || Mathf.Abs(rotationAngle) >= 180)
             {
+                if(Mathf.Abs(rotationAngle) >= 180)
+                {
+                    rotationAngle = 180 * Mathf.Sign(rotationAngle);
+                }
                 should_notify_complete = true;
+                targetAngle = 0;
+                rotateIterator = 0;
             }
         }
 
@@ -92,7 +98,7 @@ public class SadmInstructionReceiver : MonoBehaviour
     void RotateTo(float target)
     {
         targetAngle = target;
-        rotateIterator = targetAngle;
+        rotateIterator = 0;
         instruction_running = true;
     }
 }
